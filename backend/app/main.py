@@ -11,6 +11,8 @@ def fastApp() -> FastAPI:
     Postgres as database 
     auth/google/authorize scope need profile and email
 
+    backend = jwt
+
     scopes = profile , email
     """)
     
