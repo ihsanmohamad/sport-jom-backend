@@ -3,13 +3,24 @@ from api.services import fastapi_users
 from db.models import User, Facility, Booking, BusinessUserModel, UserModel, Amenities
 from models.schemas.facility import FacilityIn, Facility_Pydantic, FacilityIn_Pydantic, FacilityResponse, FacilityInResponse, FacilityUserResponse
 from models.schemas.business import BusinessUser_Pydantic
-
+from typing import Optional
 
 router = APIRouter()
 
 @router.get("/filter", name="get_by_filter")
-async def get_facility_by_filter():
-    return {"otw"}
+async def get_facility_by_filter(name: Optional[str] = None, category: Optional[str] = None):
+    if (name is None and category is None):
+        return []
+    elif (name and category is None) :
+        facility =  Facility.all().filter(name__icontains=name)
+        return await Facility_Pydantic.from_queryset(facility)
+    elif (category and name is None) :
+        facility =  Facility.all().filter(category__icontains=category)
+        return await Facility_Pydantic.from_queryset(facility)
+    elif (name and category):
+        facility =  Facility.all().filter(category__icontains=category).filter(name__icontains=name)
+        return await Facility_Pydantic.from_queryset(facility)
+    
 
 # @router.post("", response_model=FacilityInResponse, name="create_facility")
 @router.post("", name="create_facility")
@@ -61,7 +72,8 @@ async def get_facility_by_id(facility_id:int):
     facility_obj['amenities'] = amenity_list
     return facility_obj
 
-@router.patch("/{facility_id}", response_model=FacilityInResponse)
+# @router.patch("/{facility_id}", response_model=FacilityInResponse)
+@router.patch("/{facility_id}")
 async def update_facility(
     facility_id:int, 
     facility: FacilityIn_Pydantic,

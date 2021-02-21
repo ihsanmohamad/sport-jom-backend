@@ -3,7 +3,7 @@ from models.schemas.users import (
     UserModel_Pydantic, UserModel, PublicUserIn)
 
 from api.services import fastapi_users
-from db.models import PublicUserModel, User
+from db.models import PublicUserModel, User, Team
 
 from fastapi import APIRouter, Depends
 
@@ -35,10 +35,37 @@ async def update_user_detail( public:PublicUserIn, user: User = Depends(fastapi_
     await PublicUserModel.filter(user_id=user.id).update(**public.dict(exclude_unset=True))
     return await PublicUser_Pydantic.from_queryset_single(PublicUserModel.get(user_id=user.id))
 
-@router.post("/team", name="user team")
-async def join_team(user: User = Depends(fastapi_users.get_current_active_user)):
-    user
-    return {"otw"}
+@router.post("/join-team", name="user team")
+async def join_team(team_id: int, user: User = Depends(fastapi_users.get_current_active_user)):
+    public_user = await PublicUser_Pydantic.from_queryset_single(PublicUserModel.get(user_id=user.id))
+    public_data = await PublicUserModel.get(user_id=user.id)
+    team_obj = await Team.filter(id=team_id).get()
+    insert_related = await team_obj.public.add(public_data)
+
+    
+    members = await team_obj.public.all()
+    member_list = []
+    for member in members:
+        member_data = {"id": member.id, "name": member.name}
+        member_list.append(member_data)
+    result = {"id": team_obj.id, "name": team_obj.name, "members": member_list}
+    return result
+
+@router.delete("/leave-team", name="leave team")
+async def delete_team(team_id: int, user: User = Depends(fastapi_users.get_current_active_user)):
+    public_user = await PublicUser_Pydantic.from_queryset_single(PublicUserModel.get(user_id=user.id))
+    public_data = await PublicUserModel.get(user_id=user.id)
+    team_obj = await Team.filter(id=team_id).get()
+    delete_related = await team_obj.public.remove(public_data)
+
+    
+    members = await team_obj.public.all()
+    member_list = []
+    for member in members:
+        member_data = {"id": member.id, "name": member.name}
+        member_list.append(member_data)
+    result = {"id": team_obj.id, "name": team_obj.name, "members": member_list}
+    return result
 
 @router.get("/team", name="get team")
 async def get_team(user: User = Depends(fastapi_users.get_current_active_user)):

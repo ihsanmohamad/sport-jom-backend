@@ -24,10 +24,16 @@ async def get_team():
     team = Team.all()
     return await Team_Pydantic.from_queryset(team)
 
-@router.get("/{team_id}", response_model=Team_Pydantic, name="get_team_by_id")
+# @router.get("/{team_id}", response_model=Team_Pydantic, name="get_team_by_id")
+@router.get("/{team_id}", name="get_team_by_id")
 async def get_team_by_id(team_id: int):
     team = await Team.filter(id=team_id).get()
-    result = {"id": team.id, "name": team.name}
+    members = await team.public.all()
+    member_list = []
+    for member in members:
+        member_data = {"id": member.id, "name": member.name}
+        member_list.append(member_data)
+    result = {"id": team.id, "name": team.name, "members": member_list}
     return result
 
 @router.patch("/{team_id}", response_model=Team_Pydantic, name="update team")

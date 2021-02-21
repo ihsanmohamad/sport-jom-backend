@@ -1,4 +1,5 @@
 from starlette.config import Config
+from starlette.datastructures import CommaSeparatedStrings
 
 from fastapi_mail import ConnectionConfig
 
@@ -6,6 +7,12 @@ from fastapi_mail import ConnectionConfig
 config = Config(".env")
 
 models = ["db.models", "aerich.models"]
+
+# HOST URL
+HOST_URL = config("HOST_URL")
+
+# CORS ORIGIN
+ORIGINS = config("CORS_ORIGINS", cast=CommaSeparatedStrings)
 
 # DB
 DB_URL = config("DB_CONNECTION")

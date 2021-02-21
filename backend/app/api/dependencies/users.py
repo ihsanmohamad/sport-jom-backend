@@ -11,7 +11,7 @@ async def on_after_register(user: UserDB, request: Request, ):
     <p>Thank you for registering!</p> 
     """
     message = MessageSchema(
-        subject="You have registered an account on SportJom",
+        subject="Terima kasih kerana mendaftar!",
         recipients=[user.email],
         body=html,
         subtype='html'
