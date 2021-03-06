@@ -1,0 +1,4 @@
+.env
+backend/app/env/
+env/
+__pycache__

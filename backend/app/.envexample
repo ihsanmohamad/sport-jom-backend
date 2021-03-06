@@ -1,0 +1,21 @@
+# general setting
+HOST_URL=127.0.0.1
+CORS_ORIGINS=http://localhost,http://localhost:8100,http://192.168.1.8,http://192.168.1.8:8100,
+    
+SECRET_KEY=
+DB_CONNECTION=postgres://postgres:q@localhost:5432/yourdatabase
+# DB_CONNECTION=sqlite://fyp
+
+# oauth
+CLIENT_ID=google oauth id
+CLIENT_SECRET=google secret key
+
+# email
+MAIL_USERNAME=your email
+MAIL_PASSWORD=your password
+MAIL_FROM=your email
+MAIL_FROM_NAME=name to appear on email sent
+MAIL_PORT=465
+MAIL_SERVER=smtp.gmail.com
+MAIL_TLS=False
+MAIL_SSL=True
